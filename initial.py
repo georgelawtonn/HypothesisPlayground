@@ -1,5 +1,18 @@
-from hypothesis import given, settings, Verbosity, strategies as st, assume
+import hypothesis
+from hypothesis import given, settings, Verbosity, strategies as st, assume, target
 # Also pip install pytest
+
+
+# Simple addition function
+def add(num1, num2):
+    return num1 + num2
+
+
+@settings(verbosity=Verbosity.verbose)  # Run with pytest filename.py --hypothesis-show-statistics -s (examples)
+@given(st.integers(), st.integers())
+def test_add(num1, num2):
+    result = add(num1, num2)
+    assert(result == (num1 + num2))
 
 
 def find_majority(lon):
@@ -20,7 +33,7 @@ def find_majority(lon):
     return -1
 
 
-@settings(verbosity=Verbosity.verbose)  # Run with pytest filename.py -s to see examples
+@settings(verbosity=Verbosity.verbose)
 @given(st.lists(st.integers().filter(lambda x: 10 > x > 0)))  # Filtering to encourage duplicates
 def test_find_majority(lon):  # Works the same as the prop function in Racket
     result = find_majority(lon)  # Getting result from tested func
@@ -29,6 +42,33 @@ def test_find_majority(lon):  # Works the same as the prop function in Racket
     majority_size = len(lon) / 2
     count_of_results = sum(1 for number in lon if number == result)  # Counts the number of result in lon
     assert(count_of_results > majority_size)  # Asserts that this is true to pass test
+
+
+def remove_triple_one_plus_strings(lon):
+    result = []
+    for number in lon:
+        if str(number).count('1') < 3:
+            result.append(number)
+    return result
+
+
+@settings(verbosity=Verbosity.verbose, max_examples=100)
+@given(st.lists(st.integers(), max_size=10))
+def test_remove_triple_one_strings(lon):
+    assume(len(lon) > 0)
+    results = remove_triple_one_plus_strings(lon)
+    jcount = 0
+    for number in results:
+        jcount += str(number).count('1')
+    target(jcount)
+    for number in results:
+        assert(3 > str(number).count('1'))
+    remaining_lon = set(lon) - set(results)
+    for number in remaining_lon:
+        assert(3 <= str(number).count('1'))
+
+
+
 
 
 
