@@ -7,8 +7,8 @@ from hypothesis import given, settings, Verbosity, strategies as st, assume, tar
 def add(num1, num2):
     return num1 + num2
 
-
-@settings(verbosity=Verbosity.verbose)  # Run with pytest filename.py --hypothesis-show-statistics -s (examples)
+# Run with pytest filename.py --hypothesis-show-statistics -s (examples)
+@settings(verbosity=Verbosity.verbose)
 @given(st.integers(), st.integers())
 def test_add(num1, num2):
     result = add(num1, num2)
@@ -57,10 +57,10 @@ def remove_triple_one_plus_strings(lon):
 def test_remove_triple_one_strings(lon):
     assume(len(lon) > 0)
     results = remove_triple_one_plus_strings(lon)
-    jcount = 0
+    onecount = 0
     for number in results:
-        jcount += str(number).count('1')
-    target(jcount)
+        onecount += str(number).count('1')
+    target(onecount)
     for number in results:
         assert(3 > str(number).count('1'))
     remaining_lon = set(lon) - set(results)
